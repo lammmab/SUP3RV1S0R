@@ -9,18 +9,26 @@ int WINAPI WinMain(
 {
     // TODO: boot the local listener
 
+    // 1: choose the process
     auto path = supervisor::chooseProcess();
     if (path.empty()) exit(-1);
+
     std::string pathStr = path.string();
     PROCESS_INFORMATION info{};
-    bool success = supervisor::openSubprocess(
+
+    // 2: open the process suspended
+    bool opened = supervisor::openSubprocess(
         pathStr, 
         info, 
         true
     );
-    if (!success) exit(-1);
+    if (!opened) exit(-1);
 
-    // TODO: actually hook the DLL (supervisor::injectDll)
+    // 3: hook the built DLL (intercept.cpp)
+    auto dir = supervisor::getExeDirectory() / L"libintercept.dll";
+    std::string fileStr = dir.string();
+    bool injected = supervisor::injectDll(info, fileStr);
+    if (!injected) exit(-1);
 
     // resume the subprocess
     ResumeThread(info.hThread);

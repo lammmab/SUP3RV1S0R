@@ -6,6 +6,7 @@
 namespace supervisor {
 // subprocess lifecycle
 
+std::filesystem::path getExeDirectory();
 std::filesystem::path chooseProcess();
 bool openSubprocess(std::string& process, PROCESS_INFORMATION& outProcInfo, bool suspended = false);
 

@@ -101,6 +101,13 @@ std::filesystem::path chooseProcess()
     return result;
 }
 
+std::filesystem::path getExeDirectory()
+{
+    wchar_t path[MAX_PATH];
+    GetModuleFileNameW(nullptr, path, MAX_PATH);
+    return std::filesystem::path(path).parent_path();
+}
+
 bool injectDll(const PROCESS_INFORMATION& info, const std::string& dllPath) {
     // allocate mem in the target process for the DLL path string
     SIZE_T pathSize = dllPath.size() + 1; // +1 for null terminator
